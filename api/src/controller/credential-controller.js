@@ -33,25 +33,6 @@ exports.registerCredential = (req, res) =>{
 };
 
 
-exports.getCredentials = (req, res) =>{
-
-
-
-	Credential.find().exec((err, credentials)=>{
-		if(err){
-			res.status(500).send({message: 'Error en la petición'});
-		}else{
-			if(!credentials){
-				res.status(404).send({message: 'No existen credenciales registradas'});
-			}else{
-				res.status(200).send({credentials});
-			}
-			
-		}
-
-	});
-
-};
 
 exports.getCredential = (req, res) =>{
 
