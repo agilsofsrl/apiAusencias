@@ -23,6 +23,11 @@ var UserSchema = new mongoose.Schema({
         type:String,
         required:true,
         trim:true
+    },
+    pushid:{
+        type:String,
+        required:true,
+        trim:true
     }
 })
 
