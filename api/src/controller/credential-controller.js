@@ -38,14 +38,14 @@ exports.getCredential = (req, res) =>{
 
 	var cod = req.params.codigo;
 
-	Credential.find({"codigo":cod.toUpperCase()}).exec((err, credentials)=>{
+	Credential.find({"codigo":cod.toUpperCase()}).exec((err, credential)=>{
 		if(err){
 			res.status(500).send({message: 'Error en la petición'});
 		}else{
-			if(!credentials){
+			if(!credential){
 				res.status(404).send({message: 'No se encontro la credencial'});
 			}else{
-				res.status(200).send({credentials});
+				res.status(200).send({credential});
 			}
 			
 		}

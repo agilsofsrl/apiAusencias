@@ -18,6 +18,12 @@ var CredentialSchema = new mongoose.Schema({
         unique: true,
         required: true,
         trim: true
+    },
+    header: {
+        type: String,
+        unique: true,
+        required: true,
+        trim: true
     }
 })
 
