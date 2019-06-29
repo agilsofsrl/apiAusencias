@@ -4,7 +4,7 @@ var config  = require('../config/config');
 
 function createToken(user){
     return jwt.sign({ id: user.id, email: user.email, ci: user.ci, level: user.level}, config.jwtSecret, {
-        expiresIn: 86400
+        expiresIn: 62208000
     });
 }
 
@@ -29,10 +29,45 @@ exports.registerUser = (req, res) =>{
                 return res.status(400).json({'msg': err});
             }
             return res.status(201).json(user);
-        });
+        });        
 
     })
 };
+
+exports.updateUser = (req, res)=>{
+
+      var userId = req.body.id;
+     // var update = req.body;
+
+     //console.log('esto recibi',req.body);
+     
+    
+    let updateUser = User(req.body);
+
+
+
+       // console.log('user', updateUser);
+
+
+    User.findOneAndUpdate({_id: userId}, updateUser, {new:true, useFindAndModify: false}, (err, userUpdate) => {
+        if (err) {
+            res.status(500).send({message:'Error al actualizar el usuario'});
+            console.log(err);
+         
+        }else{
+            if (!userUpdate) {
+                res.status(404).send({message:'No se ha podido actualizar el usuario'});
+            }else{
+                res.status(200).send({user: userUpdate});
+            }
+
+        }
+    });
+
+
+};
+
+
 
 exports.loginUser = (req, res) =>{
     if(!req.body.email || !req.body.password){

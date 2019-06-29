@@ -48,6 +48,29 @@ UserSchema.pre('save', function(next) {
     });
 });
 
+UserSchema.pre('findOneAndUpdate', function(next) {
+    var user = this._update;
+    delete user._id;
+
+    
+    //console.log('ingreso al pre de mod', user);
+
+    //if(!user.isModified('password')) return next();
+
+    bcrypt.genSalt(10, function(err, salt){
+        if(err) return next(err);
+
+        bcrypt.hash(user.password, salt, function(err, hash){
+            if(err) return next(err);
+
+            console.log('Este es el hash',hash);
+
+            user.password = hash;
+            next();
+        });
+    });
+});
+
 UserSchema.methods.comparePassword = function (candidatePassword, cb){
 
     bcrypt.compare(candidatePassword, this.password, (err, isMatch)=>{
