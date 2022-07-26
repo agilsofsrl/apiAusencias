@@ -11,6 +11,7 @@ var app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+
 app.use((req, res, next)=>{
 	res.header('Access-Control-Allow-Origin','*');
 	res.header('Access-Control-Allow-Headers', 'Authorization, X_API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
@@ -44,4 +45,4 @@ conection.on('error', (err)=>{
 });
 
 app.listen(port);
-console.log('There will be dragons: http://localhost:' + port);
+console.log('http://localhost:' + port);

@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcryptjs');
 
 var UserSchema = new mongoose.Schema({
     email: {
@@ -28,7 +28,14 @@ var UserSchema = new mongoose.Schema({
         type:String,
         required:true,
         trim:true
-    }
+    },
+    idEquipo:{
+         type:String
+    },
+    notificaciones:[{
+        cabeza:{type:String,required:true,trim:true},
+        cuerpo:{type:String,required:true,trim:true}
+    }]
 })
 
 UserSchema.pre('save', function(next) {
@@ -63,7 +70,7 @@ UserSchema.pre('findOneAndUpdate', function(next) {
         bcrypt.hash(user.password, salt, function(err, hash){
             if(err) return next(err);
 
-            console.log('Este es el hash',hash);
+            //console.log('Este es el hash',hash);
 
             user.password = hash;
             next();
