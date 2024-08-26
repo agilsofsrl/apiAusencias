@@ -116,47 +116,55 @@ exports.updateEquipo =async (req, res)=>{
 //verificar si el correo existe en la base de datos
 //enviar correco electronico si el correo existe 
 exports.reestablecer =  async (req, res)=>{
-    const {email}=req.body
-    const usuarioVerificado = await User.findOne({email:email})
-    if(usuarioVerificado!=null){
-        const ciUsuario = usuarioVerificado.ci
-        const correoUsuario = usuarioVerificado.email 
-        const token = jwt.sign({ci:usuarioVerificado.ci},config.jwtSecret,{expiresIn:"60m"})
-        const urlApp='https://agilsof.com/reset-password'+'?ci='+ciUsuario+'&token='+token
-        var transporter = nodemailer.createTransport(smtpTransport({
-            /*service: 'gmail',
-            host: 'smtp.gmail.com',
-            auth: {
-                user: String(config.email),
-                pass: String(config.passwordApp),
-            }*/
-
-            host: 'm78.siteground.biz',
-            port: 465,
-            secure: true, // true for 465, false for other ports
-            auth: {
-                user: String(config.email), // generated ethereal user
-                pass: String(config.passwordApp), // generated ethereal password
-            },
-        }));
-        //------------------------------------------
-        const mailOptions = {
-            from: String(config.email), //CORREO DEL REMITENTE
-            to: String(correoUsuario),//CORREO DE DESTINO
-            subject:'PASS - Reestablecer contraseña', //ASUNTO DEL CORREO
-            html: `<p>Click en el siguiente enlace para reestablecer tu contraseña: </p>`+urlApp
-        };
-        //------------------------------------------
-        transporter.sendMail(mailOptions,(err,response)=>{
-                if(err){
-                    return res.send(false)
-                }else{
-                    return res.send(true)
+    try{
+        const {email}=req.body
+        const usuarioVerificado = await User.findOne({email:email})
+        if(usuarioVerificado!=null){
+            const numeroAleatorio = Math.floor(1000000 + Math.random() * 9000000);
+            const encPassword = await bcrypt.hash(String(numeroAleatorio),10);
+            const result = await User.updateOne({ ci: usuarioVerificado.ci }, { password:encPassword});
+            if(!result.nModified) return res.send(false);
+            const correoUsuario = usuarioVerificado.email 
+            let transporter = nodemailer.createTransport(smtpTransport({
+                service: 'gmail',
+                auth: {
+                    user:'agilpass2024@gmail.com',
+                    pass: 'kdlu gjlu pacj gjgr',
                 }
-        })
-    }else{
+                /*host: 'm78.siteground.biz',
+                port: 465,
+                secure: true, // true for 465, false for other ports
+                auth: {
+                    user: String(config.email), // generated ethereal user
+                    pass: String(config.passwordApp), // generated ethereal password
+                },*/
+            }));
+            //------------------------------------------
+            const mailOptions = {
+                from: String(config.email), //CORREO DEL REMITENTE
+                to: String(correoUsuario),//CORREO DE DESTINO
+                subject:'PASS - Reestablecer contraseña', //ASUNTO DEL CORREO
+                html:`<p>Estimado usuario,</p>
+                <p>Su nueva contraseña es: <strong>${numeroAleatorio}</strong></p>
+                <p>Le recomendamos que cambie esta contraseña lo antes posible para garantizar una mayor seguridad en su cuenta.</p>
+                <p>Atentamente,</p>
+                <p>El equipo de soporte</p>`
+            };
+            //------------------------------------------
+            transporter.sendMail(mailOptions,(err,response)=>{
+                    if(err){
+                        return res.send(false);
+                    }else{
+                        return res.send(true);
+                    }
+            })
+        }else{
+            return res.send(false) 
+        }   
+    }catch(e){
         return res.send(false) 
-    }   
+    }
+
 }
 
 //Entrega id del equipo movil
