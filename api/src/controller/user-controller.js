@@ -123,7 +123,7 @@ exports.reestablecer =  async (req, res)=>{
         if(usuarioVerificado!=null){
             const numeroAleatorio = Math.floor(1000000 + Math.random() * 9000000);
             const encPassword = await bcrypt.hash(String(numeroAleatorio),10);
-            const result = await User.updateOne({ ci: usuarioVerificado.ci }, { password:encPassword});
+            const result = await User.updateOne({ _id: usuarioVerificado._id}, { password:encPassword});
             console.log('result',result);
             if(!result.nModified) return res.send(false);
             const correoUsuario = usuarioVerificado.email; 
