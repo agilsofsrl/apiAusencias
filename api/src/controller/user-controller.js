@@ -117,14 +117,14 @@ exports.updateEquipo =async (req, res)=>{
 //enviar correco electronico si el correo existe 
 exports.reestablecer =  async (req, res)=>{
     try{
-        const {email}=req.body
-        const usuarioVerificado = await User.findOne({email:email})
+        const {email}=req.body;
+        const usuarioVerificado = await User.findOne({email:email});
         if(usuarioVerificado!=null){
             const numeroAleatorio = Math.floor(1000000 + Math.random() * 9000000);
             const encPassword = await bcrypt.hash(String(numeroAleatorio),10);
             const result = await User.updateOne({ ci: usuarioVerificado.ci }, { password:encPassword});
             if(!result.nModified) return res.send(false);
-            const correoUsuario = usuarioVerificado.email 
+            const correoUsuario = usuarioVerificado.email; 
             let transporter = nodemailer.createTransport(smtpTransport({
                 service: 'gmail',
                 auth: {
@@ -143,7 +143,7 @@ exports.reestablecer =  async (req, res)=>{
             const mailOptions = {
                 from: String(config.email), //CORREO DEL REMITENTE
                 to: String(correoUsuario),//CORREO DE DESTINO
-                subject:'PASS - Reestablecer contraseña', //ASUNTO DEL CORREO
+                subject:'AGILPASS - Reestablecer contraseña', //ASUNTO DEL CORREO
                 html:`<p>Estimado usuario,</p>
                 <p>Su nueva contraseña es: <strong>${numeroAleatorio}</strong></p>
                 <p>Le recomendamos que cambie esta contraseña lo antes posible para garantizar una mayor seguridad en su cuenta.</p>
@@ -159,12 +159,11 @@ exports.reestablecer =  async (req, res)=>{
                     }
             })
         }else{
-            return res.send(false) 
+            return res.send(false); 
         }   
     }catch(e){
-        return res.send(false) 
+        return res.send(false); 
     }
-
 }
 
 //Entrega id del equipo movil
