@@ -124,7 +124,7 @@ exports.reestablecer =  async (req, res)=>{
             const numeroAleatorio = Math.floor(1000000 + Math.random() * 9000000);
             const encPassword = await bcrypt.hash(String(numeroAleatorio),10);
             const result = await User.updateOne({ ci: usuarioVerificado.ci }, { password:encPassword});
-            console.log('result',usuarioVerificado);
+            console.log('result',result);
             if(!result.nModified) return res.send(false);
             const correoUsuario = usuarioVerificado.email; 
             let transporter = nodemailer.createTransport(smtpTransport({
@@ -164,6 +164,7 @@ exports.reestablecer =  async (req, res)=>{
             return res.send(false); 
         }   
     }catch(e){
+        console.log('error',e)
         return res.send(e); 
     }
 }
